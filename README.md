@@ -6,6 +6,14 @@ This repository includes codes and models of "The Blessing of Deep Transfer and 
 
 
 ## Usage
+
+| Argument | Description
+| :--- | :----------
+-t | type of network.
+-e| number of epochs
+--label | label
+--model | pre-trained model
+
 - To train a DTL model,use the following commands and arguments:<br />
 ```
 python train.py -t dtl [-e epchos] [--label label]  [-model model]
