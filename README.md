@@ -9,10 +9,17 @@ This repository includes codes and models of "The Blessing of Deep Transfer and 
 
 | Argument | Description
 | :--- | :----------
--t | type of network.
+-t | type of network
 -e| number of epochs
 --label | label
 --model | pre-trained model
+
+| model argument | Description
+| :--- | :----------
+vgg_19 | VGG 19
+vgg_16| VGG 16
+densenet_121 | Densenet 121
+resnet_50| Resnet 50
 
 - To train a DTL model,use the following commands and arguments:<br />
 ```
