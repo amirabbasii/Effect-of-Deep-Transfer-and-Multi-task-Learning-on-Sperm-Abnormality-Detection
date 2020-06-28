@@ -13,7 +13,7 @@ This repository includes codes and models of "The Blessing of Deep Transfer and 
 -e| number of epochs
 --label | label
 --model | pre-trained model
-
+- To choose a pre-trained model, you can use one of the following models:
 | model argument | Description
 | :--- | :----------
 vgg_19 | VGG 19
