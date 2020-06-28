@@ -15,7 +15,8 @@ This repository includes codes and models of "The Blessing of Deep Transfer and 
 --model | pre-trained model
 
 
-- To choose a pre-trained model, you can use one of the following models:
+- To choose a pre-trained model, you can use one of the following models:<br/>
+
 | model argument | Description
 | :--- | :----------
 vgg_19 | VGG 19
