@@ -4,12 +4,12 @@ This repository includes codes and models of "The Blessing of Deep Transfer and 
 # Usage:
 - To train a DTL model,use the following commands and arguments:<br />
 ```
-python train.npy -t dtl [-e epchos] [--label label]  [-model model]
+python train.py -t dtl [-e epchos] [--label label]  [-model model]
 ```
 
 - To train a DMTL model,use the following commands and arguments:<br />
 ```
-python train.npy -t dmtl [-e epchos] [--label label] [--phase phase] [-model model]
+python train.py -t dmtl [-e epchos] [--label label] [--phase phase] [-model model]
 ```
 
 
