@@ -33,4 +33,5 @@ python train.py -t dtl [-e epchos] [--label label]  [-model model]
 python train.py -t dmtl [-e epchos] [--label label] [--phase phase] [-model model]
 ```
 
-
+## Models
+The CNN models that were introduced and evaluated in our research paper can be found in the v1.0 release of this repository.
