@@ -4,6 +4,11 @@
 # Introduction
 This repository includes codes and models of "The Blessing of Deep Transfer and Multi task Learning on Sperm Abnormality Detection" paper.
 
+##Dataset
+First you should download the dataset using:
+'''
+git clone https://github.com/soroushj/mhsma-dataset.git
+'''
 ## Usage
 
 | Argument | Description
@@ -35,3 +40,13 @@ python train.py -t dmtl [-e epchos] [--label label] [--phase phase] [-model mode
 
 ## Models
 The CNN models that were introduced and evaluated in our research paper can be found in the v1.0 release of this repository.
+## References
+@article{javadi2019novel,
+  title={A novel deep learning method for automatic assessment of human sperm images},
+  author={Javadi, Soroush and Mirroshandel, Seyed Abolghasem},
+  journal={Computers in Biology and Medicine},
+  volume={109},
+  pages={182--194},
+  year={2019},
+  doi={10.1016/j.compbiomed.2019.04.030}
+}
