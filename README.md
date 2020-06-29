@@ -6,9 +6,9 @@ This repository includes codes and models of "The Blessing of Deep Transfer and 
 
 ##Dataset
 First you should download the dataset using:
-'''
-git clone https://github.com/soroushj/mhsma-dataset.git
-'''
+```
+- git clone https://github.com/soroushj/mhsma-dataset.git
+```
 ## Usage
 
 | Argument | Description
