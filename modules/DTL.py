@@ -1,13 +1,41 @@
+import math
+from builtins import enumerate
 
+from sklearn.metrics import confusion_matrix,roc_auc_score
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.layers import Lambda
+import tensorflow as tf
+import numpy as np
+from tensorflow.keras.models import save_model, load_model
+import random
+from imblearn.keras import BalancedBatchGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator as IDG
+from sklearn.metrics import confusion_matrix
+from tensorboard.plugins.hparams import api as hp
+from imblearn.keras import BalancedBatchGenerator, balanced_batch_generator
+from scipy.ndimage.filters import median_filter
+from tensorflow.keras import regularizers
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import ReduceLROnPlateau, LearningRateScheduler, TensorBoard
+from tensorflow.keras.layers import concatenate, Dense, Dropout, Input, Activation, Flatten, Conv2D, MaxPooling2D, \
+    AveragePooling2D, GlobalAveragePooling2D, BatchNormalization
+from modules.Sampler import Sampler
+from modules import LoadData as ld
+from modules.LoadData import load_data
+from modules.Generators import *
+from modules.CallBacks import *
+import os
+import pickle
 
-class DTL(MyModel):
-    def __init__(self, params,base_model):
+class DTL():
+    def __init__(self, params,base_model,label,data=None):
         default_params = {"agumentation": False, "scale": False, "dense_activation": "relu", "regularizition": 0.0
             , "dropout": 0.0, "optimizer": "adam", "number_of_dense": 1, "balancer": "None", "batch_size": 32}
         default_params.update(params)
         Model = base_model
         params = default_params
-        data = load_data(label=label, phase="search")
+        if data==None:
+          data = load_data(label=label, phase="search")
         self.batch_size = params["batch_size"]
         if params['agumentation']:
             data["x_val"] = ld.normalize(data["x_val"])
@@ -43,10 +71,75 @@ class DTL(MyModel):
 
         self.__model = model
         self.__data = data
-        self.__checkpoint=CallBacks.DTL_ModelCheckpoint(self.__data["x_val"], self.__data["y_val"], self.__model, name_of_best_weight)
+        
         self.balancer = params["balancer"]
         self.__number_of_dense = params["number_of_dense"]
         self.details = [list(params.keys())[i] + ":" + str(list(params.values())[i]) for i in range(len(params))]
+
+    def train(self, epochs, load_best_weigth, verbose, TensorB, name_of_best_weight, phase):
+        if phase == "train" and self.agumnetation:
+            self.__data["x_train"] = self.__data["x_train_128"]
+        # self.__data["x_val"] = self.__data["x_val_128"]
+        batch_size = self.batch_size
+        balancer = self.balancer
+        callbacks = [DTL_ModelCheckpoint(self.__data["x_val"], self.__data["y_val"], self.__model, name_of_best_weight)]
+        if TensorB:  # save History of train
+            tb = TensorBoard(log_dir="log_train/" + "#".join(self.details))
+            callbacks.append(tb)
+        '''
+        Here we have two kinds of sampler.
+        online,offline
+        online:for fix data on every epoch(we will use it in fit_generator)
+        offline:for fix data before train
+
+        onlines 1-batch_balancer:we can just use Data Agumentation with it
+                2-DySa:nothing can't combine with it
+        offlines:if balamcer be one of {smote,adasyn,None},then we should just our balancer to fix data and then use agumentation or not.
+
+        '''
+        ##batch_balancer
+        if balancer == "batch_balancer":
+            S = [[], []]
+            for i in range(len(self.__data["x_train"])):
+                S[self.__data["y_train"][i][0]].append(self.__data["x_train"][i])
+            S = np.array(S)
+            generator = BatchBalancer(S, self.agumnetation, batch_size)
+            hist = self.__model.fit_generator(generator, validation_data=(self.__data["x_val"], self.__data["y_val"]),
+                                              shuffle=True, callbacks=callbacks, steps_per_epoch=1000 / batch_size,
+                                              epochs=epochs, verbose=verbose)
+        else:  ###It means that we will use offline balancers
+            self.__data = self.__getBalancedData(balancer)  # fixing data
+            if self.agumnetation:
+                generator = Agumentation(self.__data, batch_size)
+                hist = self.__model.fit_generator(generator,
+                                                  validation_data=(self.__data["x_val"], self.__data["y_val"]),
+                                                  shuffle=True, callbacks=callbacks, steps_per_epoch=1000 / batch_size,
+                                                  epochs=epochs, verbose=verbose)
+            ###It means that we will use offline balancers
+            else:
+
+                hist = self.__model.fit(self.__data["x_train"], self.__data["y_train"], epochs=epochs,
+                                        batch_size=batch_size,
+                                        validation_data=(self.__data["x_val"], self.__data["y_val"]), shuffle=True,
+                                        callbacks=callbacks, verbose=verbose)
+        if load_best_weigth:
+            self.__model.load_weights(name_of_best_weight)
+        save_model(self.__model, "model_" + name_of_best_weight)
+
+        # cleaning model from GPU
+
+    def clear(self):
+        tf.keras.backend.clear_session()
+        del self.__model
+        del self.__data
+
+    def __getBalancedData(self, name):
+        if name == "None":  # no sampler
+            return self.__data
+        elif name == "smote":
+            return Sampler("smote", 10, self.__data).run()
+        elif name == "adasyn":
+            return Sampler("adasyn", 10, self.__data).run()
 
     def evaluate(self):
         X = self.__data["x_test"]
@@ -68,16 +161,10 @@ class DTL(MyModel):
         auc = roc_auc_score(y, y_pred)
         return [acc,precision,recall,f_half,g_mean,auc,mcc]
     @staticmethod
-    def k_fold(k, epochs, label, params, load_best_weigth, verbose, TensorB, name_of_best_weight,base_model):
-        data = None
-        flag = None
+    def k_fold(k,label, epochs, params, load_best_weigth, verbose, TensorB, name_of_best_weight,base_model):
+        flag = params['agumentation']
+        data = ld.load_data(label, phase="aug_evaluation") if flag==True else ld.load_data(label, phase="evaluation")
         results=[]
-        if params['agumentation']:
-            data = ld.load_data(label, phase="aug_evaluation")
-            flag = True
-        else:
-            data = ld.load_data(label, phase="evaluation")
-            flag = False
         size = len(data['x']) // k
         tmp_idx = np.arange(data['x'].shape[0])
         np.random.shuffle(tmp_idx)
@@ -105,7 +192,7 @@ class DTL(MyModel):
             ##########fixing data#########
             data = ld.fix_data(flag, x_train, y_train, x_val, y_val, x_test, y_test)
 
-            model = MyModel(params, data, base_model=base_model)
+            model = DTL(params=params,base_model=base_model,label=label,data=data)
             model.train(epochs, load_best_weigth, verbose, TensorB, name_of_best_weight + str(i) + ".h5", "k_fold")
             results.append(model.evaluate())
             print(results[-1])

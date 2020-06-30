@@ -1,0 +1,2 @@
+{'agumentation': False, 'scale': False, 'dense_activation': 'sigmoid', 'regularizition': 0.0, 'dropout': 0.0, 'optimizer': 'adadelta', 'number_of_dense': 1, 'balancer': 'None', 'loss': 'binary_crossentropy', 'batch_size': 64, 'nn': 1024}
+{"agumentation": False, "scale": False, "dense_activation": ["selu", "selu", "selu"] ,"regularizition":[0.1, 0.0, 0.1] ,"dropout": [0.0, 0.9, 0.0], "optimizer": "adadelta","number_of_dense": [1, 1, 1], "balancer": "None","batch_size": 64, "nn": [1024,1024,1024]}

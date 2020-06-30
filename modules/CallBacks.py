@@ -16,14 +16,6 @@ class DMTL_ModelCheckpoint(tf.keras.callbacks.Callback):
             self.best_loss=10000
             self.name_of_best_weight=name_of_best_weight
             self.lastans=[]
-            preprocess_config = {
-                'shift_range': 5,
-                'rotate_range': 360.0,
-                'flip_ud': True,
-                'flip_lr': True,
-                'scale_range': 1.25,
-            }
-            self.data_aug = ld.DataAug(**preprocess_config)
 
         def on_epoch_end(self, epoch, logs={}):
             X = self.x_val
@@ -50,6 +42,7 @@ class DMTL_ModelCheckpoint(tf.keras.callbacks.Callback):
                 acc = tmp[4:][self.label_index]
                 acc = float("{0:.3f}".format(acc))
                 if (acc>self.best_acc) or (self.best_acc==acc and self.best_loss<loss):
+                    self.__model.save_weights(self.name_of_best_weight)
                     self.best_acc=acc
                     self.best_loss=loss
                     print("updated to ",str(acc))
