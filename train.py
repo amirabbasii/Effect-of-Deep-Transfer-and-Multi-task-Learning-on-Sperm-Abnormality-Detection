@@ -10,9 +10,8 @@ sys.stdout.flush()
 from modules.Sampler import Sampler
 import tensorflow as tf
 import os
-# from utils.evaluation_tools import *
 import tensorflow as tf
-from modules.MyModel import MyModel
+
 from modules.LoadData import load_data
 from modules.DMTL import DMTL
 from modules.DTL import DTL

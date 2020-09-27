@@ -12,15 +12,15 @@ from keras import backend as K
 
 def evaluation(preds, reals, p,verbos=True):
     c_matrix = confusion_matrix(reals, preds)
-    precision = c_matrix[0, 0] / sum(c_matrix[0])
-    recall = c_matrix[0, 0] / sum(c_matrix[:, 0])
+    precision = c_matrix[0, 0] / sum(c_matrix[:,0])
+    recall = c_matrix[0, 0] / sum(c_matrix[0])
     G_mean = math.sqrt(precision * recall)
     accuracy = np.sum(c_matrix.diagonal()) / np.sum(c_matrix)
     f = 1.25 * precision * recall / (.25 * precision + recall)
     TP = c_matrix[0][0]
     TN = c_matrix[1][1]
-    FP = c_matrix[0][1]
-    FN = c_matrix[1][0]
+    FN= c_matrix[0][1]
+    FP= c_matrix[1][0]
     MCC = (TP * TN - FP * FN) / math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
     AUC = roc_auc_score(reals, p)
 

@@ -148,15 +148,15 @@ class DTL():
         y_pred = y_pred1 > 0.5
         y_pred = y_pred * 1
         c_matrix = confusion_matrix(y, y_pred)
-        precision = c_matrix[0, 0] / sum(c_matrix[0])
-        recall = c_matrix[0, 0] / sum(c_matrix[:, 0])
+        precision = c_matrix[0, 0] / sum(c_matrix[:,0])
+        recall = c_matrix[0, 0] / sum(c_matrix[ 0])
         acc = np.sum(c_matrix.diagonal()) / np.sum(c_matrix)
         f_half = 1.25 * precision * recall / (.25 * precision + recall)
         g_mean = math.sqrt(precision * recall)
         TP = c_matrix[0][0]
         TN = c_matrix[1][1]
-        FP = c_matrix[0][1]
-        FN = c_matrix[1][0]
+        FN= c_matrix[0][1]
+        FP= c_matrix[1][0]
         mcc = (TP * TN - FP * FN) / math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
         auc = roc_auc_score(y, y_pred)
         return [acc,precision,recall,f_half,g_mean,auc,mcc]
