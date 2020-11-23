@@ -3,7 +3,7 @@
 
 # Introduction
 This repository includes codes and models of "The Blessing of Deep Transfer and Multi task Learning on Sperm Abnormality Detection" paper.
-
+link: https://doi.org/10.1016/j.compbiomed.2020.104121
 ## Dataset
 First you should download the MHSMA dataset using:
 ```
