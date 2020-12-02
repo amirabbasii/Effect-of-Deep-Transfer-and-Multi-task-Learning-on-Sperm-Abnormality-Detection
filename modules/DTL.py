@@ -52,7 +52,7 @@ class DTL():
 
         ############ Creating CNN ##############
         optimizer = params["optimizer"]
-        inp = Input((64, 64, 1))
+        inp = Input((128,128, 1))
         con = concatenate([inp, inp, inp])
         model = Model(include_top=False, weights='imagenet', input_tensor=con)
         x = Flatten()(model.layers[-1].output)
