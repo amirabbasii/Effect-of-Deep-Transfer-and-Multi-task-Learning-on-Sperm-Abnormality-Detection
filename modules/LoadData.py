@@ -144,9 +144,9 @@ def load_data(label='h', phase='aug_evaluation'):
     y_train = np.load(y_train_file)[..., None]
     y_test = np.load(y_test_file)[..., None]
 
-   //x_train_128 = _preprocess_128_images(x_train_128)
-   //x_valid_128 = _preprocess_128_images(x_valid_128)
-   // x_test_128 = _preprocess_128_images(x_test_128)
+   #x_train_128 = _preprocess_128_images(x_train_128)
+   #x_valid_128 = _preprocess_128_images(x_valid_128)
+   #x_test_128 = _preprocess_128_images(x_test_128)
     if phase == 'search':
 
         return {
