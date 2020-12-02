@@ -144,19 +144,19 @@ def load_data(label='h', phase='aug_evaluation'):
     y_train = np.load(y_train_file)[..., None]
     y_test = np.load(y_test_file)[..., None]
 
-    x_train_128 = _preprocess_128_images(x_train_128)
-    x_valid_128 = _preprocess_128_images(x_valid_128)
-    x_test_128 = _preprocess_128_images(x_test_128)
+   //x_train_128 = _preprocess_128_images(x_train_128)
+   //x_valid_128 = _preprocess_128_images(x_valid_128)
+   // x_test_128 = _preprocess_128_images(x_test_128)
     if phase == 'search':
 
         return {
-                "x_train": x_train,
+                "x_train": x_train_128,
                 "y_train": y_train,
                 "x_train_128": x_train_128,
                 'x_val_128': x_valid_128,
-                "x_val": x_valid,
+                "x_val": x_valid_128,
                 "y_val": y_valid,
-                "x_test": x_test,
+                "x_test": x_test_128,
                 "y_test": y_test
                 }
 
